@@ -178,7 +178,7 @@ class Graphe {
     //// Fonctions Rajoutées
 
 
-    // Renvoie le degré du sommet donnée en entrée
+    // Renvoie le degré du sommet donnée
     int Degre(int sommet) {
         return this.successeurs(sommet).length;
     }
@@ -194,7 +194,8 @@ class Graphe {
 
         int i = 0;
         while ((i < nb_sommets) & retVal) {
-            retVal = retVal & this.Degre(i) > 1;
+            retVal &= this.Degre(i) == 1;
+            i++;
         }
 
         return retVal;
