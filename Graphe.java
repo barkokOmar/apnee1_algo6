@@ -160,7 +160,6 @@ class Graphe {
         return successeurs;
     }
 
-
     // Renvoie un tableau contenant les arcs du graphe
     public Arc[] arcs(){
         Arc arcs[] = new Arc[nombreArcs()];
@@ -173,6 +172,32 @@ class Graphe {
             }
         }
         return arcs;
+    }
+    
+
+    //// Fonctions Rajoutées
+
+
+    // Renvoie le degré du sommet donnée en entrée
+    int Degre(int sommet) {
+        return this.successeurs(sommet).length;
+    }
+
+    // Renvoie true si le graphe est un couplage, false sinon
+    boolean EstCouplage() {
+        boolean retVal = true;
+
+        int nb_sommets = this.nombreSommets(); 
+
+        // Nombre de sommets doit etre paire
+        retVal &= ( (nb_sommets % 2) == 0 );
+
+        int i = 0;
+        while ((i < nb_sommets) & retVal) {
+            retVal = retVal & this.Degre(i) > 1;
+        }
+
+        return retVal;
     }
 
 
