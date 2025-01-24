@@ -7,6 +7,49 @@ class Graphe {
     // Pour i allant de 0 à n-1, sommets[i] contient l'ensemble des arcs ayant pour source le noeud (i+1), dans une liste chaînée. 
     Maillon [] sommets;
 
+    Graphe() {
+        this.sommets = null;
+    }
+
+/* A finir !!!
+    Graphe(Graphe graphe) {
+        int nombre_sommets = graphe.nombreSommets();
+        this.sommets = new Maillon[nombre_sommets];
+
+        int i = 0; 
+        while (i < nombre_sommets) {
+            Maillon maillon_nouveau, maillon_origin;
+            maillon_origin = graphe.sommets[i];
+
+            while (null != maillon_origin) {
+                maillon_nouveau = new Maillon();
+                maillon_nouveau.suivant = null;
+                Arc arc_origin = maillon_origin.arc;
+                nouveau.arc = new Arc(arc_origin.numero, arc_roigin.source, arc_origin.destination, new Etiquette(arc_origin.etiquette));
+                if (this.sommets[i] == null) {
+                    this.sommets[i] = maillon_nouveau;
+                } else {
+                    maillon_nouveau.suivant = this.sommets[i];
+                    this.sommets[i] = maillon_nouveau;
+                }
+
+                maillon_origin = maillon_origin.suivant;
+            }
+            
+
+                nouveau.suivant = null;
+                if (sommets[source] == null) {
+                    sommets[source] = nouveau;
+                } else {
+                    courant = sommets[source];
+                    while (courant.suivant != null)
+                        courant = courant.suivant;
+                    courant.suivant = nouveau;
+                }
+        }
+
+    }
+*/
     Graphe(InputStream in) throws Exception {
         lire(in);
     }
@@ -72,7 +115,7 @@ class Graphe {
 
 
     // Retourne le nombre de sommets dans le graphe
-    public int nombreSommets(){
+    public int nombreSommets() {
         return sommets.length;
     }
 
@@ -179,12 +222,12 @@ class Graphe {
 
 
     // Renvoie le degré du sommet donnée
-    int Degre(int sommet) {
+    public int Degre(int sommet) {
         return this.successeurs(sommet).length;
     }
 
     // Renvoie true si le graphe est un couplage, false sinon
-    boolean EstCouplage() {
+    public boolean EstCouplageParfait() {
         boolean retVal = true;
 
         int nb_sommets = this.nombreSommets(); 
@@ -194,12 +237,87 @@ class Graphe {
 
         int i = 0;
         while ((i < nb_sommets) & retVal) {
-            retVal &= this.Degre(i) == 1;
+            retVal &= this.Degre(i) == 1;   // C'est cette condition qui vérifier le "parfait"
             i++;
         }
 
         return retVal;
     }
 
+    // Renvoie true si l'arc existe deja dans le graphe, false sinon
+    public boolean ExisteArc(Arc arc) {
+        boolean retVal = true; 
+
+        retVal &= this.adjacents(arc.source, arc.destination);
+
+        Arc [] arcs = this.arcs();
+
+        int i = 0;
+        while (retVal & (i < arcs.length)) {
+            retVal &= (arcs[i].numero != arc.numero);
+            i++;
+        }
+
+        return retVal;
+    }
+    
+    // Supprime l'arete qui a la source sommet1 et destination sommet2
+    // Precondition : l'arete existe dans le graphe
+    void SupprimeArcVers(int sommet1, int sommet2) {
+        Maillon ref_vers_maillon = sommets[sommet1];
+
+        // On est sur que s'il y a qu'un seul arc, alors c'est l'arc qu'on cherche
+        if (ref_vers_maillon.suivant == null) {
+            sommets[sommet1] = null;
+        }
+
+        // Sinon, on cherche notre arete
+        while (null != ref_vers_maillon.suivant & ref_vers_maillon.suivant.arc.source != sommet2) {
+            ref_vers_maillon = ref_vers_maillon.suivant;
+        }
+        ref_vers_maillon.suivant = ref_vers_maillon.suivant.suivant;
+    }
+
+    // Renvoie true si l'arc donné est valide, false sinon
+    public boolean EstArcValide(Arc arc) {
+        boolean retVal = true;
+
+        int source = arc.source;
+        int dest = arc.destination;
+
+        retVal &= !(source < 0 || dest < 0 || source >= nombreSommets() || dest >= nombreSommets());
+
+        return retVal;
+    }
+
+    // Supprime l'arc entre sommet1 et sommet2 si ce dernier existe 
+    public void SupprimeArc(int sommet1, int sommet2) {
+        if (null != this.chercheArcVers(sommet1, sommet2)) {
+            this.SupprimeArcVers(sommet1, sommet2);
+        } else if (null != this.chercheArcVers(sommet2, sommet1)) {
+            this.SupprimeArcVers(sommet2, sommet1);
+        }
+    }
+
+    // Ajoute l'arc au graphe si ce dernier n'existe pas deja
+    public void AjoutArc(Arc arc) {
+        int source = arc.source;
+        int dest = arc.destination;
+
+        if (!this.ExisteArc(arc) & this.EstArcValide(arc)) {
+            Maillon nouveau_maillon = new Maillon();
+            nouveau_maillon.arc = new Arc(arc.numero, source, dest, arc.etiquette);
+            nouveau_maillon.suivant = sommets[source];
+            sommets[source] = nouveau_maillon;
+        }
+    }
+
+    // Renvoie un tableau contenant les arcs du couplage parfait si il en existe, null sinon
+    public Arc[] ChercheCouplageParfait() {
+        return null;
+    }
+    public Arc[] ChercheCouplageParfait_rec() {
+        return null;
+    }
 
 }

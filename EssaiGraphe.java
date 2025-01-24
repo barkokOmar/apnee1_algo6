@@ -19,7 +19,8 @@ class EssaiGraphe {
 
         int sommet = 3;
         System.out.println("Le degré du sommet "+sommet+" de ce graphe est: "+g.Degre(sommet-1));
-        System.out.println("\""+args[0]+"\" "+(g.EstCouplage() ? "est" : "n'est pas")+" un couplage");
+        System.out.println("\""+args[0]+"\" "+(g.EstCouplageParfait() ? "est" : "n'est pas")+" un couplage parfait");
+        System.out.println(g);
 
     }
 }
